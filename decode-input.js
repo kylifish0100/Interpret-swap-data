@@ -10,7 +10,7 @@ const provider = new ethers.AlchemyProvider("homestead", AlchemyKey);
 
 
 async function getContractABI(contractAddress) {
-    const apiKey = process.env.EtherscamKey; // Replace with your Etherscan API key
+    const apiKey = process.env.EtherscanKey; //  fetch Etherscan API key in .env
     const url = `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}&apikey=${apiKey}`;
 
     try {
