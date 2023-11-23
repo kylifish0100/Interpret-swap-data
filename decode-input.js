@@ -1,12 +1,17 @@
-const abiDecoder = require('abi-decoder'); // Import abi-decoder
+const abiDecoder = require('abi-decoder'); 
+const Web3 = require('web3');
 const { ethers } = require('ethers');
 const axios = require('axios');
+const fs = require('fs');
 const { get } = require('http');
 require('dotenv').config();
 
 // Connect to an Ethereum node 
 const AlchemyKey = process.env.AlchemyKey;
 const provider = new ethers.AlchemyProvider("homestead", AlchemyKey);
+
+// Initialize Web3 with the provider
+// const web3 = new Web3(new Web3.providers.WebsocketProvider(process.env.AlchemyWS));
 
 
 async function getContractABI(contractAddress) {
@@ -41,17 +46,16 @@ async function decodeTxn(txHash) {
     }
 }
 
-function getPathArrayFromDecodedData(decodedData) {
-    // Find the 'path' parameter
-    const pathParam = decodedData.params.find(param => param.name === 'path');
-
-    // Check if 'path' parameter exists and is an array
-    if (pathParam && Array.isArray(pathParam.value)) {
-        return pathParam.value;
+function getValueFromDecodedData(valuetype, decodedData) {
+    // Find the parameter mathching the type we seek
+    const param = decodedData.params.find(param => param.name === valuetype);
+    // If we find it, return it's value
+    if (param) {
+        return param.value;
     } else {
         // Return an empty array or handle the error as you see fit
         console.error('Path parameter not found or is not an array');
-        return [];
+        return null;
     }
 }
 
@@ -82,10 +86,24 @@ async function main() {
         // Initialize abi-decoder with the ABI of all router contracts
         await addRoutersABI(Routers);
         const decodedData = await decodeTxn('0x88bc181ceaec34f47237431ccda851f773288d5671edda23b5cecf1379645244'); 
-        const swapPath = getPathArrayFromDecodedData(decodedData);
+        const swapPath = getValueFromDecodedData('path', decodedData);
+        const deadline = getValueFromDecodedData('deadline', decodedData);
         const inputToken = swapPath[0];
         const outputToken = swapPath[swapPath.length - 1];
         console.log(`Input token: ${inputToken}, Output token: ${outputToken}`);
+        const swapData = {
+            swapPath: swapPath,
+            inputToken: inputToken,
+            outputToken: outputToken,
+            deadline: deadline
+          };
+          
+          const jsonData = JSON.stringify(swapData, null, 2);
+          
+          fs.writeFile('swapData.json', jsonData, (err) => {
+            if (err) throw err;
+            console.log('Data written to file');
+          });
     } catch (err) {
         console.error('Error:', err);
     }

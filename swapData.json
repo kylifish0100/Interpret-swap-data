@@ -1,0 +1,9 @@
+{
+  "swapPath": [
+    "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "0x85bdebd8db75d4a2b6d0f24a8edb4937e8ef4c01"
+  ],
+  "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+  "outputToken": "0x85bdebd8db75d4a2b6d0f24a8edb4937e8ef4c01",
+  "deadline": "1700713934738"
+}
