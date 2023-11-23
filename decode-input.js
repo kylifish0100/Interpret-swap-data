@@ -17,7 +17,7 @@ const alchemy = new Alchemy(settings);
 
 // Connect to an Ethereum node 
 const provider = new ethers.AlchemyProvider("homestead", process.env.AlchemyKey);
-const web3 = new Web3(new Web3.providers.WebsocketProvider(process.env.AlchemyWS));
+const WSprovider = new ethers.WebSocketProvider(process.env.AlchemyWS);
 
 const Routers = {
     'Universal': ['0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad'],
@@ -59,13 +59,18 @@ async function decodeTxn(txHash) {
 
 function getValueFromDecodedData(valuetype, decodedData) {
     // Find the parameter mathching the type we seek
-    const param = decodedData.params.find(param => param.name === valuetype);
+    let param;
+    if(valuetype === 'path') {
+        param = decodedData.params.find(param => param.name === 'path' || param.name === 'inputs');
+    }else{
+        param = decodedData.params.find(param => param.name === valuetype);
+    }
     // If we find it, return it's value
     if (param) {
         return param.value;
     } else {
         // Return an empty array or handle the error as you see fit
-        console.error('Path parameter not found or is not an array');
+        console.error(`${valuetype} parameter not found or is not an array`);
         return null;
     }
 }
@@ -112,34 +117,25 @@ async function withKnownTxn(txnHash) {
     }
 }
 
+
 async function processTxnInMempool() {
     try {
         // Add router ABIs to abi-decoder
         await addRoutersABI(Routers);
-        // Listen to all new pending transactions with alchemy-sdk
-        // alchemy.ws.on(
-        //     { method: "alchemy_pendingTransactions"},
-        //     (res) => console.log(res)
-        // )
-        // Subscribe to pending transactions
-        web3.eth.subscribe('pendingTransactions', async (error, txHash) => {
-            if (error) {
-                console.error('Error:', error);
-                return;
-            }
-
+        
+        WSprovider.on("pending", async (transaction) => {
             try {
                 // Fetch the transaction details
-                const tx = await web3.eth.getTransaction(txHash);
-                console.log(txHash);
+                const tx = await provider.getTransaction(transaction);
+                
                 // Check if the transaction is to one of the routers
-                if (tx.to && Object.values(Routers).flat().includes(tx.to.toLowerCase())) {
-                    console.log('Found swap transaction:', txHash);
+                if (tx && tx.to && Object.values(Routers).flat().includes(tx.to.toLowerCase())) {
+                    console.log('Found swap transaction:', tx.hash);
                     // Decode the transaction input
-                    const decodedData = abiDecoder.decodeMethod(tx.input);
-                    
-                    // Further processing if it's a swap function
-                    if (decodedData && decodedData.name.startsWith('swap')) {
+                    const decodedData = await decodeTxn(tx.hash); 
+                    console.log(decodedData);
+                    if (decodedData) {
+                        // Decode swap transaction details and log the swap data
                         const swapPath = getValueFromDecodedData('path', decodedData);
                         const deadline = getValueFromDecodedData('deadline', decodedData);
                         const inputToken = swapPath[0];
@@ -152,19 +148,23 @@ async function processTxnInMempool() {
                             deadline: deadline
                         };
                         
-                        console.log(swapData);
-                        
+                        const jsonData = JSON.stringify(swapData, null, 2);
+          
+                        fs.appendFile('swapData.json', jsonData + '\n', (err) => {
+                            if (err) {
+                                console.error('Error appending to file:', err);
+                            }
+                        });
                     }
                 }
             } catch (txError) {
-                console.error('Transaction Fetch Error:', txError);
+                console.error('Error processing transaction:', txError);
             }
         });
     } catch (err) {
-        console.error('Error:', err);
+        console.error('Error initializing subscription:', err);
     }
 }
 
 // Call the main function
 processTxnInMempool();
-
