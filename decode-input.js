@@ -57,23 +57,51 @@ async function decodeTxn(txHash) {
     }
 }
 
-function getValueFromDecodedData(valuetype, decodedData) {
-    // Find the parameter mathching the type we seek
-    let param;
-    if(valuetype === 'path') {
-        param = decodedData.params.find(param => param.name === 'path' || param.name === 'inputs');
-    }else{
-        param = decodedData.params.find(param => param.name === valuetype);
-    }
-    // If we find it, return it's value
-    if (param) {
-        return param.value;
+function identifyRouter(address) {
+    const lowerCaseAddress = address.toLowerCase();
+    const lowerCaseRouters = Object.values(Routers).flat().map(router => router.toLowerCase());
+
+    // Check and return the corresponding value based on the address match
+    if (lowerCaseAddress === lowerCaseRouters[0]) {
+        return 1;
+    } else if (lowerCaseAddress === lowerCaseRouters[1] || lowerCaseAddress === lowerCaseRouters[2]) {
+        return 2;
+    } else if (lowerCaseAddress === lowerCaseRouters[3] || lowerCaseAddress === lowerCaseRouters[4]) {
+        return 3;
     } else {
-        // Return an empty array or handle the error as you see fit
-        console.error(`${valuetype} parameter not found or is not an array`);
+        return 0; // or any other default value for no match
+    }
+
+}
+
+function getValueFromDecodedData(valuetype, decodedData, routerType) {
+    let param;
+
+    switch (routerType) {
+        case '1':
+            param = decodedData.params.find(p => p.name === 'inputs'); // Corrected assignment
+            break;
+        case '2':
+            param = decodedData.params.find(p => p.name === valuetype);
+            break;
+        case '3':{
+            const paramsObject = decodedData.params[0]; // Assuming this is always the correct structure
+            param = paramsObject && paramsObject.value ? paramsObject.value[valuetype] : undefined;
+            break;
+        }
+        default:
+            console.error('Invalid routerType');
+            return null;
+    }
+
+    if (param) {
+        return param.value ? param.value : param; // Return param.value if it exists, else return param
+    } else {
+        console.error(`${valuetype} parameter not found`);
         return null;
     }
 }
+
 
 async function addRoutersABI(Routers) {
     for (const group in Routers) {
@@ -94,8 +122,12 @@ async function withKnownTxn(txnHash) {
         // Initialize abi-decoder with the ABI of all router contracts
         await addRoutersABI(Routers);
         const decodedData = await decodeTxn(txnHash); 
-        const swapPath = getValueFromDecodedData('path', decodedData);
-        const deadline = getValueFromDecodedData('deadline', decodedData);
+        const txnInfo = await provider.getTransaction(txnHash);
+        const routerType = identifyRouter(txnInfo.to); 
+        // console.log(txnInfo.to);   
+        // console.log(`Router type: ${routerType}`);
+        const swapPath = getValueFromDecodedData('path', decodedData, routerType.toString());
+        const deadline = getValueFromDecodedData('deadline', decodedData, routerType.toString());
         const inputToken = swapPath[0];
         const outputToken = swapPath[swapPath.length - 1];
         console.log(`Input token: ${inputToken}, Output token: ${outputToken}`);
@@ -125,32 +157,36 @@ async function processTxnInMempool() {
         
         WSprovider.on("pending", async (transaction) => {
             try {
+                let results = [];
                 // Fetch the transaction details
                 const tx = await provider.getTransaction(transaction);
-                
+                const routerType = identifyRouter(tx.to);
                 // Check if the transaction is to one of the routers
-                if (tx && tx.to && Object.values(Routers).flat().includes(tx.to.toLowerCase())) {
-                    console.log('Found swap transaction:', tx.hash);
+                if (routerType) {
+                    console.log(` Found swap transaction: ${tx.hash}$, Using router type ${identifyRouter(tx.to)}`);
                     // Decode the transaction input
                     const decodedData = await decodeTxn(tx.hash); 
                     console.log(decodedData);
                     if (decodedData) {
                         // Decode swap transaction details and log the swap data
-                        const swapPath = getValueFromDecodedData('path', decodedData);
-                        const deadline = getValueFromDecodedData('deadline', decodedData);
+                        const swapPath = getValueFromDecodedData('path', decodedData, routerType.toString() );
+                        const deadline = getValueFromDecodedData('deadline', decodedData, routerType.toString());
                         const inputToken = swapPath[0];
                         const outputToken = swapPath[swapPath.length - 1];
                         
                         const swapData = {
+                            hash: tx.hash,
                             swapPath: swapPath,
                             inputToken: inputToken,
                             outputToken: outputToken,
                             deadline: deadline
                         };
+
+                        results.push(swapData);
                         
-                        const jsonData = JSON.stringify(swapData, null, 2);
+                        const jsonData = JSON.stringify(results, null, 2);
           
-                        fs.appendFile('swapData.json', jsonData + '\n', (err) => {
+                        fs.writeFile('swapData.json', jsonData + '\n', (err) => {
                             if (err) {
                                 console.error('Error appending to file:', err);
                             }
@@ -167,4 +203,5 @@ async function processTxnInMempool() {
 }
 
 // Call the main function
+// withKnownTxn("0x6bb5bd9162439c25174c38781ea651602cebe7058ed528ab8acc5fa26dae26bc");
 processTxnInMempool();
