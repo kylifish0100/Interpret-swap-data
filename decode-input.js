@@ -85,7 +85,34 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
             param = decodedData.params.find(p => p.name === valuetype);
             break;
         case '3':{
-            const paramsObject = decodedData.params[0]; // Assuming this is always the correct structure
+            if((decodedData.name === 'exactInputSingle' || decodedData.name === 'exactOutputSingle') && valuetype === 'path'){
+                param = [];
+                param.push(decodedData.params[0].value.tokenIn);
+                param.push(decodedData.params[0].value.tokenOut);
+                break;
+            } else if(decodedData.name === 'multicall'){
+                param = [];
+                let subParamObject;
+                console.log(decodedData.params[0].value.length);
+                for (let i = 0; i < decodedData.params[0].value.length; i++) {
+                    subParamObject = abiDecoder.decodeMethod(decodedData.params[0].value[i]);
+                    console.log(subParamObject);
+                    const result = getValueFromDecodedData(valuetype, subParamObject, routerType);
+                    // console.log(result)
+                    if(Array.isArray(result)){
+                        result.forEach(obj => {
+                            param.push(obj);
+                        });
+                    }else if(result){
+                        param.push(result);
+                    }
+                    // console.log(param);
+                }
+                break;
+            }
+
+            const paramsObject = decodedData.params[0]; 
+            // console.log(paramsObject);
             param = paramsObject && paramsObject.value ? paramsObject.value[valuetype] : undefined;
             break;
         }
@@ -94,7 +121,7 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
             return null;
     }
 
-    if (param) {
+    if (param != [] && param != undefined) {
         return param.value ? param.value : param; // Return param.value if it exists, else return param
     } else {
         console.error(`${valuetype} parameter not found`);
@@ -125,7 +152,8 @@ async function withKnownTxn(txnHash) {
         const txnInfo = await provider.getTransaction(txnHash);
         const routerType = identifyRouter(txnInfo.to); 
         // console.log(txnInfo.to);   
-        // console.log(`Router type: ${routerType}`);
+        console.log(`Router type: ${routerType}`);
+        // console.log(decodedData)
         const swapPath = getValueFromDecodedData('path', decodedData, routerType.toString());
         const deadline = getValueFromDecodedData('deadline', decodedData, routerType.toString());
         const inputToken = swapPath[0];
@@ -162,7 +190,7 @@ async function processTxnInMempool() {
                 const tx = await provider.getTransaction(transaction);
                 const routerType = identifyRouter(tx.to);
                 // Check if the transaction is to one of the routers
-                if (routerType) {
+                if (routerType === 3) {
                     console.log(` Found swap transaction: ${tx.hash}$, Using router type ${identifyRouter(tx.to)}`);
                     // Decode the transaction input
                     const decodedData = await decodeTxn(tx.hash); 
@@ -203,5 +231,5 @@ async function processTxnInMempool() {
 }
 
 // Call the main function
-// withKnownTxn("0x6bb5bd9162439c25174c38781ea651602cebe7058ed528ab8acc5fa26dae26bc");
-processTxnInMempool();
+withKnownTxn("0xf10d1f9853c55b426918d0ede9c86616f35be6f6eae96efc275d1f9bd3d6475e");
+// processTxnInMempool();
