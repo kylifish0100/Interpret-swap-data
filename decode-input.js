@@ -80,14 +80,18 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
 
     switch (routerType) {
         case '1': // Universal Router
-            console.log(decodedData.params[1].value[0]);
-            subParamObject = abiDecoder.decodeMethod(decodedData.params[1].value[0]);
-            console.log(subParamObject);
+            const inputs = decodedData.params[1];
+            for (let i = 0; i < decodedData.params[1].value.length; i++) {
+                subParamObject = abiDecoder.decodeMethod(inputs.value[i]);
+                console.log(subParamObject);
+            }
+            
             break;
-        case '2':
+        case '2':// Uniswap V2 Router
             param = decodedData.params.find(p => p.name === valuetype);
             break;
-        case '3':{
+        case '3':// Uniswap V3 Router
+        {
             if((decodedData.name === 'exactInputSingle' || decodedData.name === 'exactOutputSingle') && valuetype === 'path'){
                 param = [];
                 param.push(decodedData.params[0].value.tokenIn);
@@ -95,10 +99,11 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
                 break;
             } else if(decodedData.name === 'multicall'){
                 param = [];
-                console.log(decodedData.params[0].value.length);
-                for (let i = 0; i < decodedData.params[0].value.length; i++) {
-                    subParamObject = abiDecoder.decodeMethod(decodedData.params[0].value[i]);
-                    console.log(subParamObject);
+                const dataParam = decodedData.params.find(param => param.name === 'data');
+                console.log(dataParam.value.length);
+                for (let i = 0; i < decodedData.params[1].value.length; i++) {
+                    subParamObject = abiDecoder.decodeMethod(dataParam.value[i]);
+                    console.log(subParamObject.params);
                     const result = getValueFromDecodedData(valuetype, subParamObject, routerType);
                     // console.log(result)
                     if(Array.isArray(result)){
@@ -109,6 +114,9 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
                         param.push(result);
                     }
                     // console.log(param);
+                }
+                if(valuetype === 'deadline' && param && param.length === 0){
+                    param = decodedData.params.find(p => p.name === valuetype);
                 }
                 break;
             }
@@ -155,7 +163,7 @@ async function withKnownTxn(txnHash) {
         const routerType = identifyRouter(txnInfo.to); 
         // console.log(txnInfo.to);   
         console.log(`Router type: ${routerType}`);
-        // console.log(decodedData)
+        console.log(decodedData)
         const swapPath = getValueFromDecodedData('path', decodedData, routerType.toString());
         const deadline = getValueFromDecodedData('deadline', decodedData, routerType.toString());
         const inputToken = swapPath[0];
@@ -190,10 +198,11 @@ async function processTxnInMempool() {
                 let results = [];
                 // Fetch the transaction details
                 const tx = await provider.getTransaction(transaction);
+                // console.log(tx);
                 const routerType = identifyRouter(tx.to);
                 // Check if the transaction is to one of the routers
-                if (routerType === 3) {
-                    console.log(` Found swap transaction: ${tx.hash}$, Using router type ${identifyRouter(tx.to)}`);
+                if (routerType) {
+                    console.log(` Found swap transaction: ${tx.hash}, Using router type ${identifyRouter(tx.to)}`);
                     // Decode the transaction input
                     const decodedData = await decodeTxn(tx.hash); 
                     console.log(decodedData);
@@ -217,6 +226,7 @@ async function processTxnInMempool() {
                         const jsonData = JSON.stringify(results, null, 2);
           
                         fs.writeFile('swapData.json', jsonData + '\n', (err) => {
+                            console.log('Data written to file');
                             if (err) {
                                 console.error('Error appending to file:', err);
                             }
@@ -232,6 +242,10 @@ async function processTxnInMempool() {
     }
 }
 
-// Call the main function
-withKnownTxn("0xfcfb1f065abbdd260adab1e8eb0416f9e38c8987b2629de72e8b51f829ff20f7");
-// processTxnInMempool();
+
+// Test txn using Universal Router
+// withKnownTxn("0xfcfb1f065abbdd260adab1e8eb0416f9e38c8987b2629de72e8b51f829ff20f7");
+// Test txn using Uniswap V3 Router
+// withKnownTxn("0xcac65f9d3409f347d05bd4cf5cda903d1277d01ba3e4d2ea5324cfcdf4e4901e");
+// Analyse mempool pending transactions
+processTxnInMempool();
