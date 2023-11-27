@@ -76,10 +76,13 @@ function identifyRouter(address) {
 
 function getValueFromDecodedData(valuetype, decodedData, routerType) {
     let param;
+    let subParamObject;
 
     switch (routerType) {
-        case '1':
-            param = decodedData.params.find(p => p.name === 'inputs'); // Corrected assignment
+        case '1': // Universal Router
+            console.log(decodedData.params[1].value[0]);
+            subParamObject = abiDecoder.decodeMethod(decodedData.params[1].value[0]);
+            console.log(subParamObject);
             break;
         case '2':
             param = decodedData.params.find(p => p.name === valuetype);
@@ -92,7 +95,6 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
                 break;
             } else if(decodedData.name === 'multicall'){
                 param = [];
-                let subParamObject;
                 console.log(decodedData.params[0].value.length);
                 for (let i = 0; i < decodedData.params[0].value.length; i++) {
                     subParamObject = abiDecoder.decodeMethod(decodedData.params[0].value[i]);
@@ -231,5 +233,5 @@ async function processTxnInMempool() {
 }
 
 // Call the main function
-withKnownTxn("0xf10d1f9853c55b426918d0ede9c86616f35be6f6eae96efc275d1f9bd3d6475e");
+withKnownTxn("0xfcfb1f065abbdd260adab1e8eb0416f9e38c8987b2629de72e8b51f829ff20f7");
 // processTxnInMempool();
