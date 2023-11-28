@@ -1,4 +1,4 @@
-const abiDecoder = require('abi-decoder'); 
+const abiDecoder = require('abi-decoder-ex'); 
 const { ethers } = require('ethers');
 const { Web3 } = require('web3');
 const axios = require('axios');
@@ -25,6 +25,13 @@ const Routers = {
     'UniswapV3': ['0xE592427A0AEce92De3Edee1F18E0157C05861564', '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45']
 }
 
+const commandToSignature = {
+    "00": "0xde780d8a",
+    "01": "0x2bf665c1",
+    "08": "0x3bd2d879",
+    "09": "0xff07acb8"
+};
+
 async function getContractABI(contractAddress) {
     const apiKey = process.env.EtherscanKey; //  fetch Etherscan API key in .env
     const url = `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}&apikey=${apiKey}`;
@@ -41,6 +48,36 @@ async function getContractABI(contractAddress) {
     } catch (error) {
         console.error('Error fetching ABI:', error);
         return null; // or handle the error as needed
+    }
+}
+
+async function addRoutersABI(Routers) {
+    for (const group in Routers) {
+        const routerGroup = Routers[group];
+        for (const router of routerGroup) {
+            if(router === '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad'){
+                fs.readFile('./UniversalRouterABI.json', 'utf8', (error, rawData) => {
+                    if (error) {
+                        console.error('Error reading file:', error);
+                        return;
+                    }
+
+                    try {
+                        const amendedRouterABI = JSON.parse(rawData);
+                        abiDecoder.addABI(amendedRouterABI)
+                    } catch (parseError) {
+                        console.error('Error parsing JSON:', parseError);
+                    }
+                });
+            }
+
+            try {
+                const routerAbi = await getContractABI(router);
+                abiDecoder.addABI(routerAbi);
+            } catch (error) {
+                console.error(`Error fetching ABI for ${routerName} at ${address}:`, error);
+            }
+        }
     }
 }
 
@@ -73,6 +110,21 @@ function identifyRouter(address) {
     }
 
 }
+function sliceHex(hexString) {
+    // Remove the '0x' prefix if present
+    const trimmedString = hexString.startsWith('0x') ? hexString.substring(2) : hexString;
+
+    // Split the string into two-character chunks
+    const slicedArray = [];
+    for (let i = 0; i < trimmedString.length; i += 2) {
+        slicedArray.push(trimmedString.substring(i, i + 2));
+    }
+
+    return slicedArray;
+}
+
+
+
 
 function getValueFromDecodedData(valuetype, decodedData, routerType) {
     let param;
@@ -80,10 +132,16 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
 
     switch (routerType) {
         case '1': // Universal Router
+            const commands = sliceHex(decodedData.params[0].value);
+            // console.log(commands);
             const inputs = decodedData.params[1];
             for (let i = 0; i < decodedData.params[1].value.length; i++) {
-                subParamObject = abiDecoder.decodeMethod(inputs.value[i]);
-                console.log(subParamObject);
+                if(commandToSignature[commands[i]]===undefined)
+                    continue;
+                console.log(inputs.value[i]);
+                const amendedData = commandToSignature[commands[i]]+inputs.value[i].substring(2);
+                subParamObject = abiDecoder.decodeMethod(amendedData);
+                console.log('0xde780d8a'+inputs.value[i].substring(2));
             }
             
             break;
@@ -101,7 +159,8 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
                 param = [];
                 const dataParam = decodedData.params.find(param => param.name === 'data');
                 console.log(dataParam.value.length);
-                for (let i = 0; i < decodedData.params[1].value.length; i++) {
+                for (let i = 0; i < dataParam.value.length; i++) {
+                    console.log(`Dataparam.value[${i}]: ${dataParam.value[i]}`);
                     subParamObject = abiDecoder.decodeMethod(dataParam.value[i]);
                     console.log(subParamObject.params);
                     const result = getValueFromDecodedData(valuetype, subParamObject, routerType);
@@ -136,21 +195,6 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
     } else {
         console.error(`${valuetype} parameter not found`);
         return null;
-    }
-}
-
-
-async function addRoutersABI(Routers) {
-    for (const group in Routers) {
-        const routerGroup = Routers[group];
-        for (const router of routerGroup) {
-            try {
-                const routerAbi = await getContractABI(router);
-                abiDecoder.addABI(routerAbi);
-            } catch (error) {
-                console.error(`Error fetching ABI for ${routerName} at ${address}:`, error);
-            }
-        }
     }
 }
 
@@ -244,8 +288,8 @@ async function processTxnInMempool() {
 
 
 // Test txn using Universal Router
-// withKnownTxn("0xfcfb1f065abbdd260adab1e8eb0416f9e38c8987b2629de72e8b51f829ff20f7");
+withKnownTxn("0xfcfb1f065abbdd260adab1e8eb0416f9e38c8987b2629de72e8b51f829ff20f7");
 // Test txn using Uniswap V3 Router
-// withKnownTxn("0xcac65f9d3409f347d05bd4cf5cda903d1277d01ba3e4d2ea5324cfcdf4e4901e");
+// withKnownTxn("0x4954afdf95be836e8ed45b9c1acc660ad93f9e9896281cf2cfa2ae2975b07166");
 // Analyse mempool pending transactions
-processTxnInMempool();
+// processTxnInMempool();
