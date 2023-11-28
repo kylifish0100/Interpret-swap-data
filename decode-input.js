@@ -25,12 +25,187 @@ const Routers = {
     'UniswapV3': ['0xE592427A0AEce92De3Edee1F18E0157C05861564', '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45']
 }
 
+const routerTypeToName = {
+    1: "Universal",
+    2: "UniswapV2",
+    3: "UniswapV3"
+};
+
 const commandToSignature = {
     "00": "0xde780d8a",
     "01": "0x2bf665c1",
     "08": "0x3bd2d879",
     "09": "0xff07acb8"
 };
+
+const universalRouterMethods = [
+    {
+        "inputs":
+            [
+                {
+                    "internalType": "address",
+                    "name": "recipient",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amountIn",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amountOutMinimum",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bytes",
+                    "name": "path",
+                    "type": "bytes"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "fromSender",
+                    "type": "bool"
+                }
+            ],
+        "name": "V3_SWAP_EXACT_IN",
+        "outputs":
+            [
+                {
+                    "internalType": "uint256",
+                    "name": "amountOut",
+                    "type": "uint256"
+                }
+            ],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs":
+            [
+                {
+                    "internalType": "address",
+                    "name": "recipient",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amountOut",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amountInMaximum",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bytes",
+                    "name": "path",
+                    "type": "bytes"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "fromSender",
+                    "type": "bool"
+                }
+
+            ],
+        "name": "V3_SWAP_EXACT_OUT",
+        "outputs":
+            [
+                {
+                    "internalType": "uint256",
+                    "name": "amountIn",
+                    "type": "uint256"
+                }
+            ],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs":
+            [
+                {
+                    "internalType": "address",
+                    "name": "recipient",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amountIn",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amountOutMinimum",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address[]",
+                    "name": "path",
+                    "type": "address[]"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "fromSender",
+                    "type": "bool"
+                }
+            ],
+        "name": "V2_SWAP_EXACT_IN",
+        "outputs":
+            [
+                {
+                    "internalType": "uint256",
+                    "name": "amountOut",
+                    "type": "uint256"
+                }
+            ],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs":
+            [
+                {
+                    "internalType": "address",
+                    "name": "recipient",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amountOut",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amountInMaximum",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address[]",
+                    "name": "path",
+                    "type": "address[]"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "fromSender",
+                    "type": "bool"
+                }
+
+            ],
+        "name": "V2_SWAP_EXACT_OUT",
+        "outputs":
+            [
+                {
+                    "internalType": "uint256",
+                    "name": "amountIn",
+                    "type": "uint256"
+                }
+            ],
+        "stateMutability": "payable",
+        "type": "function"
+    }
+    ]
 
 async function getContractABI(contractAddress) {
     const apiKey = process.env.EtherscanKey; //  fetch Etherscan API key in .env
@@ -55,22 +230,6 @@ async function addRoutersABI(Routers) {
     for (const group in Routers) {
         const routerGroup = Routers[group];
         for (const router of routerGroup) {
-            if(router === '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad'){
-                fs.readFile('./UniversalRouterABI.json', 'utf8', (error, rawData) => {
-                    if (error) {
-                        console.error('Error reading file:', error);
-                        return;
-                    }
-
-                    try {
-                        const amendedRouterABI = JSON.parse(rawData);
-                        abiDecoder.addABI(amendedRouterABI)
-                    } catch (parseError) {
-                        console.error('Error parsing JSON:', parseError);
-                    }
-                });
-            }
-
             try {
                 const routerAbi = await getContractABI(router);
                 abiDecoder.addABI(routerAbi);
@@ -79,6 +238,7 @@ async function addRoutersABI(Routers) {
             }
         }
     }
+    abiDecoder.addABI(universalRouterMethods);
 }
 
 
@@ -123,8 +283,24 @@ function sliceHex(hexString) {
     return slicedArray;
 }
 
-
-
+// https://github.com/tetsuroba/uniswap-universal-decoder/blob/main/universalDecoder.js#L134
+function extractPathFromV3(fullPath, reverse = false) {
+    const fullPathWithoutHexSymbol = fullPath.substring(2);
+    let path = [];
+    let currentAddress = "";
+    for (let i = 0; i < fullPathWithoutHexSymbol.length; i++) {
+        currentAddress += fullPathWithoutHexSymbol[i];
+        if (currentAddress.length === 40) {
+            path.push('0x' + currentAddress);
+            i = i + 6;
+            currentAddress = "";
+        }
+    }
+    if (reverse) {
+        return path.reverse();
+    }
+    return path;
+}
 
 function getValueFromDecodedData(valuetype, decodedData, routerType) {
     let param;
@@ -132,18 +308,36 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
 
     switch (routerType) {
         case '1': // Universal Router
-            const commands = sliceHex(decodedData.params[0].value);
-            // console.log(commands);
-            const inputs = decodedData.params[1];
-            for (let i = 0; i < decodedData.params[1].value.length; i++) {
-                if(commandToSignature[commands[i]]===undefined)
-                    continue;
-                console.log(inputs.value[i]);
-                const amendedData = commandToSignature[commands[i]]+inputs.value[i].substring(2);
-                subParamObject = abiDecoder.decodeMethod(amendedData);
-                console.log('0xde780d8a'+inputs.value[i].substring(2));
+            if(valuetype === 'path') {
+                const commands = sliceHex(decodedData.params[0].value);
+                // console.log(commands);
+                const inputs = decodedData.params[1];
+                for (let i = 0; i < decodedData.params[1].value.length; i++) {
+                    if (commandToSignature[commands[i]] === undefined)
+                        continue;
+                    // console.log(inputs.value[i]);
+                    const amendedData = commandToSignature[commands[i]] + inputs.value[i].substring(2);
+                    subParamObject = abiDecoder.decodeMethod(amendedData);
+                    // console.log(subParamObject);
+                    param = subParamObject.params.find(p => p.name === valuetype).value;
+                    switch (commands[i]) {
+                        case '00':
+                            param = extractPathFromV3(param);
+                            break;
+                        case '01':
+                            param = extractPathFromV3(param, true);
+                            break;
+                        // case '08':
+                        //     break;
+                        // case '09':
+                        //     break;
+                        default:
+                            break;
+                    }
+                }
+            }else{
+                param = decodedData.params[2].value;
             }
-            
             break;
         case '2':// Uniswap V2 Router
             param = decodedData.params.find(p => p.name === valuetype);
@@ -158,11 +352,11 @@ function getValueFromDecodedData(valuetype, decodedData, routerType) {
             } else if(decodedData.name === 'multicall'){
                 param = [];
                 const dataParam = decodedData.params.find(param => param.name === 'data');
-                console.log(dataParam.value.length);
+                // console.log(dataParam.value.length);
                 for (let i = 0; i < dataParam.value.length; i++) {
                     console.log(`Dataparam.value[${i}]: ${dataParam.value[i]}`);
                     subParamObject = abiDecoder.decodeMethod(dataParam.value[i]);
-                    console.log(subParamObject.params);
+                    // console.log(subParamObject.params);
                     const result = getValueFromDecodedData(valuetype, subParamObject, routerType);
                     // console.log(result)
                     if(Array.isArray(result)){
@@ -233,13 +427,13 @@ async function withKnownTxn(txnHash) {
 
 
 async function processTxnInMempool() {
+    let results = [];
     try {
         // Add router ABIs to abi-decoder
         await addRoutersABI(Routers);
         
         WSprovider.on("pending", async (transaction) => {
             try {
-                let results = [];
                 // Fetch the transaction details
                 const tx = await provider.getTransaction(transaction);
                 // console.log(tx);
@@ -259,6 +453,7 @@ async function processTxnInMempool() {
                         
                         const swapData = {
                             hash: tx.hash,
+                            Router: routerTypeToName[routerType],
                             swapPath: swapPath,
                             inputToken: inputToken,
                             outputToken: outputToken,
@@ -266,7 +461,8 @@ async function processTxnInMempool() {
                         };
 
                         results.push(swapData);
-                        
+                        // console.log(results);
+
                         const jsonData = JSON.stringify(results, null, 2);
           
                         fs.writeFile('swapData.json', jsonData + '\n', (err) => {
@@ -287,9 +483,10 @@ async function processTxnInMempool() {
 }
 
 
+
 // Test txn using Universal Router
-withKnownTxn("0xfcfb1f065abbdd260adab1e8eb0416f9e38c8987b2629de72e8b51f829ff20f7");
+// withKnownTxn("0xfcfb1f065abbdd260adab1e8eb0416f9e38c8987b2629de72e8b51f829ff20f7");
 // Test txn using Uniswap V3 Router
 // withKnownTxn("0x4954afdf95be836e8ed45b9c1acc660ad93f9e9896281cf2cfa2ae2975b07166");
 // Analyse mempool pending transactions
-// processTxnInMempool();
+processTxnInMempool();

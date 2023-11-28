@@ -1,11 +1,346 @@
-{
-  "swapPath": [
-    "0x38e382F74dfb84608F3C1F10187f6bEf5951DE93",
-    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-  ],
-  "inputToken": "0x38e382F74dfb84608F3C1F10187f6bEf5951DE93",
-  "outputToken": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-  "deadline": [
-    "1701091129"
-  ]
-}
+[
+  {
+    "hash": "0x9b6d1d1783b1a5d7907c29b7e7dcaec743400e40d912fc0144bca1c9dfd66c5e",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x4507cef57c46789ef8d1a19ea45f4216bae2b528"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x4507cef57c46789ef8d1a19ea45f4216bae2b528",
+    "deadline": "1701156479"
+  },
+  {
+    "hash": "0x173f55a1b93fb059c2b397b41b9ce558eb84ddbbc4eef6cd90d2a5e1cf936bea",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x0001a500a6b18995b03f44bb040a5ffc28e45cb0"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x0001a500a6b18995b03f44bb040a5ffc28e45cb0",
+    "deadline": "1701156467"
+  },
+  {
+    "hash": "0xb051ddfb117b4561249fc290302a5ba1d63c20f1ca8a4004b8c78a7f9ca09df0",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0xe9a97b0798b1649045c1d7114f8c432846828404"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0xe9a97b0798b1649045c1d7114f8c432846828404",
+    "deadline": "1701157079"
+  },
+  {
+    "hash": "0xa3852a1ffb75ce75132ad1297f3489b12e60c2bebf8aae9e12db59692a0668f3",
+    "Router": "UniswapV3",
+    "swapPath": [
+      "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      "0xcb57c6b149baa26Bb8485cD26844b469517cAEDd"
+    ],
+    "inputToken": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    "outputToken": "0xcb57c6b149baa26Bb8485cD26844b469517cAEDd",
+    "deadline": "1701156497"
+  },
+  {
+    "hash": "0xb7a15a2718cde14694d5657cbf4d31f392ca366a96d9e7d0fd45388691339fd6",
+    "Router": "Universal",
+    "swapPath": [
+      "0x1782bb88ae0aa07031bc05bbe2bd4150c9da223a",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    "inputToken": "0x1782bb88ae0aa07031bc05bbe2bd4150c9da223a",
+    "outputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "deadline": "1701156491"
+  },
+  {
+    "hash": "0x1a71a7f232977f61f0b909da5a9b8386cc2edca1c10d63e36ddad39b3192ce89",
+    "Router": "Universal",
+    "swapPath": [
+      "0xb627a1bf727f578384ba18b2a2b46f4fb924ab3b",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0xdac17f958d2ee523a2206206994597c13d831ec7"
+    ],
+    "inputToken": "0xb627a1bf727f578384ba18b2a2b46f4fb924ab3b",
+    "outputToken": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "deadline": "1701156467"
+  },
+  {
+    "hash": "0x738e3e7ed6e4351b7517642d74d53f38bdc84f9a624ae0bc5a7c57b4a9c37c00",
+    "Router": "UniswapV2",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0xbe45820f95a9572d7bdb51afaabe90b54aaaf77c"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0xbe45820f95a9572d7bdb51afaabe90b54aaaf77c",
+    "deadline": "1701157101"
+  },
+  {
+    "hash": "0x71169b1cd73860cb9de442b3beed3c9afb0a5220a5a1eb8fcb877a3377262c08",
+    "Router": "Universal",
+    "swapPath": [
+      "0x5fe72ed557d8a02fff49b3b826792c765d5ce162",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    "inputToken": "0x5fe72ed557d8a02fff49b3b826792c765d5ce162",
+    "outputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "deadline": "1701156479"
+  },
+  {
+    "hash": "0x2fcee7f2cec729a695ddcdb1d09780e6b3abbc1e95379ede432a44310bb322b7",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x2ed542eb4c3dbf593875e0672d3382e5b38f5c98"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x2ed542eb4c3dbf593875e0672d3382e5b38f5c98",
+    "deadline": "1701156491"
+  },
+  {
+    "hash": "0x7f401f8dc66993b2df3dc25e6c2200f9386885fe6b0f67381a9306abd6e17f3b",
+    "Router": "Universal",
+    "swapPath": [
+      "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "0x675bbc7514013e2073db7a919f6e4cbef576de37"
+    ],
+    "inputToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    "outputToken": "0x675bbc7514013e2073db7a919f6e4cbef576de37",
+    "deadline": "1701156479"
+  },
+  {
+    "hash": "0x716af34c6ebd8e53b5f9e69ddab52f896afaa657bfd90ba505904382343fd327",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x8390a1da07e376ef7add4be859ba74fb83aa02d5"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x8390a1da07e376ef7add4be859ba74fb83aa02d5",
+    "deadline": "1701156503"
+  },
+  {
+    "hash": "0x16f3caa46e5fc141cefb1d8291858b54441c73a52a81555e2f06befdd64c12ba",
+    "Router": "UniswapV2",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x9b29ca5ea2e8ff5365048ae6c29cf88ffc8028f8"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x9b29ca5ea2e8ff5365048ae6c29cf88ffc8028f8",
+    "deadline": "1701155913117"
+  },
+  {
+    "hash": "0xf3b6a5790b0396152f5cec78661095614054814030a2ee7c2ac4e270397bd8bf",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc91a71a1ffa3d8b22ba615ba1b9c01b2bbbf55ad",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    "inputToken": "0xc91a71a1ffa3d8b22ba615ba1b9c01b2bbbf55ad",
+    "outputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "deadline": "1701156491"
+  },
+  {
+    "hash": "0x7abcf9a7da6eeff3b8397a2f5d4ecbaf7d87462b6c74a8ede95c1ee7224356dd",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "0x6b175474e89094c44da98b954eedeac495271d0f",
+      "0x86ed939b500e121c0c5f493f399084db596dad20"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x86ed939b500e121c0c5f493f399084db596dad20",
+    "deadline": "1701156491"
+  },
+  {
+    "hash": "0x37eaa049177f13e048ae9917759c2cce71a526a0fad59b9374495fa95d9016f5",
+    "Router": "Universal",
+    "swapPath": [
+      "0x9abfc0f085c82ec1be31d30843965fcc63053ffe",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    "inputToken": "0x9abfc0f085c82ec1be31d30843965fcc63053ffe",
+    "outputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "deadline": "1701156491"
+  },
+  {
+    "hash": "0x0972d2fe89fbc144b0abee8402de5e6cad5e350439de7ab4f5d2ebe35c69ff36",
+    "Router": "Universal",
+    "swapPath": [
+      "0x6cf9788cda282aeb729477f6bda9c4db082b5746",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    "inputToken": "0x6cf9788cda282aeb729477f6bda9c4db082b5746",
+    "outputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "deadline": "1701156311"
+  },
+  {
+    "hash": "0x6e09b846e15ca8c89081b5d5d042f4220119d7b3d911bec979cc2cbb14e59210",
+    "Router": "Universal",
+    "swapPath": [
+      "0xf19308f923582a6f7c465e5ce7a9dc1bec6665b1",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    "inputToken": "0xf19308f923582a6f7c465e5ce7a9dc1bec6665b1",
+    "outputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "deadline": "1701156503"
+  },
+  {
+    "hash": "0xb1e516ff673c0ff1859c1a6a6483e9a978d4b324f23230554bfdf1756d4520e8",
+    "Router": "Universal",
+    "swapPath": [
+      "0x0f7b3f5a8fed821c5eb60049538a548db2d479ce",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    "inputToken": "0x0f7b3f5a8fed821c5eb60049538a548db2d479ce",
+    "outputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "deadline": "1701156491"
+  },
+  {
+    "hash": "0x5bf55bd2aa2d7b4be20960c73b385781e0acbf508c3d100f679849648f85ad4e",
+    "Router": "Universal",
+    "swapPath": [
+      "0x3127294f1fd3c097ef31e54301069346b29d0209",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    "inputToken": "0x3127294f1fd3c097ef31e54301069346b29d0209",
+    "outputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "deadline": "1701156503"
+  },
+  {
+    "hash": "0xd1b3bad2f026bf6d4b22b763fd2569a99754012568ecb18f32ddee037136c1e4",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+    "deadline": "1701156491"
+  },
+  {
+    "hash": "0xb3a782e22ed39ae9e69cb0c717fa70de744f72cddaeea3c6b5313bca48240d48",
+    "Router": "UniswapV2",
+    "swapPath": [
+      "0x1bbf25e71ec48b84d773809b4ba55b6f4be946fb",
+      "0x0fc6c0465c9739d4a42daca22eb3b2cb0eb9937a"
+    ],
+    "inputToken": "0x1bbf25e71ec48b84d773809b4ba55b6f4be946fb",
+    "outputToken": "0x0fc6c0465c9739d4a42daca22eb3b2cb0eb9937a",
+    "deadline": "1701157122"
+  },
+  {
+    "hash": "0x65fb0d3fa172e215bb2ecfe0dc5bd45f72f4c27a0f29ded8fa8dcc0e26599dbf",
+    "Router": "Universal",
+    "swapPath": [
+      "0x2b7b3ee07bf35bfd99634c8481931b2c1d2ab7fc",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    "inputToken": "0x2b7b3ee07bf35bfd99634c8481931b2c1d2ab7fc",
+    "outputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "deadline": "1701156491"
+  },
+  {
+    "hash": "0x8cf62fa80f5cfc087c58603c5b528a0afa1cabe7ee29c981b24b98cff315c3e7",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x0590cc9232ebf68d81f6707a119898219342ecb9"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x0590cc9232ebf68d81f6707a119898219342ecb9",
+    "deadline": "1701156467"
+  },
+  {
+    "hash": "0x6f26ee77afd27553b1db11f8fbfcc8ec1b21ad7bd7280f7c3223b14a75382c8c",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0xc5190e7fec4d97a3a3b1ab42dfedac608e2d0793"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0xc5190e7fec4d97a3a3b1ab42dfedac608e2d0793",
+    "deadline": "1701156515"
+  },
+  {
+    "hash": "0x588bd92b64d784542c85af856739df6d889653b970d0b7c662b5b930c722bbf0",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x4258e23d6a52a9932243c23f571b752b5bc7cf8b"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x4258e23d6a52a9932243c23f571b752b5bc7cf8b",
+    "deadline": "1701156491"
+  },
+  {
+    "hash": "0x4351335266bf51d0de3bd17a78b7889d921e9e5d0ac826d3c1b2ebdd8ac131a2",
+    "Router": "Universal",
+    "swapPath": [
+      "0x8390a1da07e376ef7add4be859ba74fb83aa02d5",
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    "inputToken": "0x8390a1da07e376ef7add4be859ba74fb83aa02d5",
+    "outputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "deadline": "1701156515"
+  },
+  {
+    "hash": "0xa17d587c80fdcc7437e9a548a2bb980d9b8f7066d3d45cbb23b0a02d7606af30",
+    "Router": "Universal",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0xf8ef84e74afa7e523e2062ccaa03116bac3cf6d8"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0xf8ef84e74afa7e523e2062ccaa03116bac3cf6d8",
+    "deadline": "1701156503"
+  },
+  {
+    "hash": "0x23c0457430b52323d84dd3ae15a63e6a779236dc0a37467d517b6426fa86aee4",
+    "Router": "UniswapV2",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x20ed9680189d72bcda11ea4074f83a0846fa01b9"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x20ed9680189d72bcda11ea4074f83a0846fa01b9",
+    "deadline": "1701155932099"
+  },
+  {
+    "hash": "0x8fa1055ab3c523a88f2e3f5d582dc63bc88d994cae75b2bbf4a7eaa076a46b9b",
+    "Router": "UniswapV2",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x20ed9680189d72bcda11ea4074f83a0846fa01b9"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x20ed9680189d72bcda11ea4074f83a0846fa01b9",
+    "deadline": "1701155932100"
+  },
+  {
+    "hash": "0x717a18fd518360b143829904507ccda2469a9a7279cdc190e13da198cd08630e",
+    "Router": "UniswapV2",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x20ed9680189d72bcda11ea4074f83a0846fa01b9"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x20ed9680189d72bcda11ea4074f83a0846fa01b9",
+    "deadline": "1701155932099"
+  },
+  {
+    "hash": "0xa42514e6ea8bec433274419ecec7d32cbf2bf5000d06723aa74e0b2d60ca7bf7",
+    "Router": "UniswapV2",
+    "swapPath": [
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "0x20ed9680189d72bcda11ea4074f83a0846fa01b9"
+    ],
+    "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "outputToken": "0x20ed9680189d72bcda11ea4074f83a0846fa01b9",
+    "deadline": "1701155932098"
+  }
+]
