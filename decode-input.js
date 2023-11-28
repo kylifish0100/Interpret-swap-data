@@ -2,7 +2,7 @@ const abiDecoder = require('abi-decoder-ex');
 const { ethers } = require('ethers');
 const { Web3 } = require('web3');
 const axios = require('axios');
-const fs = require('fs');
+const fs = require('fs').promises;
 const { get } = require('http');
 const { Network, Alchemy } = require('alchemy-sdk');
 require('dotenv').config();
@@ -38,174 +38,17 @@ const commandToSignature = {
     "09": "0xff07acb8"
 };
 
-const universalRouterMethods = [
-    {
-        "inputs":
-            [
-                {
-                    "internalType": "address",
-                    "name": "recipient",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "amountIn",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "amountOutMinimum",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "bytes",
-                    "name": "path",
-                    "type": "bytes"
-                },
-                {
-                    "internalType": "bool",
-                    "name": "fromSender",
-                    "type": "bool"
-                }
-            ],
-        "name": "V3_SWAP_EXACT_IN",
-        "outputs":
-            [
-                {
-                    "internalType": "uint256",
-                    "name": "amountOut",
-                    "type": "uint256"
-                }
-            ],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs":
-            [
-                {
-                    "internalType": "address",
-                    "name": "recipient",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "amountOut",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "amountInMaximum",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "bytes",
-                    "name": "path",
-                    "type": "bytes"
-                },
-                {
-                    "internalType": "bool",
-                    "name": "fromSender",
-                    "type": "bool"
-                }
-
-            ],
-        "name": "V3_SWAP_EXACT_OUT",
-        "outputs":
-            [
-                {
-                    "internalType": "uint256",
-                    "name": "amountIn",
-                    "type": "uint256"
-                }
-            ],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs":
-            [
-                {
-                    "internalType": "address",
-                    "name": "recipient",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "amountIn",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "amountOutMinimum",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "address[]",
-                    "name": "path",
-                    "type": "address[]"
-                },
-                {
-                    "internalType": "bool",
-                    "name": "fromSender",
-                    "type": "bool"
-                }
-            ],
-        "name": "V2_SWAP_EXACT_IN",
-        "outputs":
-            [
-                {
-                    "internalType": "uint256",
-                    "name": "amountOut",
-                    "type": "uint256"
-                }
-            ],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs":
-            [
-                {
-                    "internalType": "address",
-                    "name": "recipient",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "amountOut",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "amountInMaximum",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "address[]",
-                    "name": "path",
-                    "type": "address[]"
-                },
-                {
-                    "internalType": "bool",
-                    "name": "fromSender",
-                    "type": "bool"
-                }
-
-            ],
-        "name": "V2_SWAP_EXACT_OUT",
-        "outputs":
-            [
-                {
-                    "internalType": "uint256",
-                    "name": "amountIn",
-                    "type": "uint256"
-                }
-            ],
-        "stateMutability": "payable",
-        "type": "function"
+async function readJsonFile(filePath) {
+    try {
+        const rawData = await fs.readFile(filePath, 'utf8');
+        const jsonData = JSON.parse(rawData);
+        return jsonData;
+    } catch (error) {
+        console.error('Error reading or parsing file:', error);
+        throw error; // Re-throw the error to be handled by the caller
     }
-    ]
+}
+
 
 async function getContractABI(contractAddress) {
     const apiKey = process.env.EtherscanKey; //  fetch Etherscan API key in .env
@@ -238,6 +81,7 @@ async function addRoutersABI(Routers) {
             }
         }
     }
+    const universalRouterMethods = await readJsonFile('./SwapMethodsABI.json');
     abiDecoder.addABI(universalRouterMethods);
 }
 
